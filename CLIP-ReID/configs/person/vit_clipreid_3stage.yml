@@ -58,6 +58,7 @@ SOLVER:
     BIAS_LR_FACTOR: 2
     STEPS: [30, 50]
     GAMMA: 0.1
+    TEXT_LR_FACTOR: 70.0
 
   # Intended for image_encoder-only finetuning after joint adaptation.
   STAGE3:

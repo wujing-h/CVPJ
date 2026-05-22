@@ -43,7 +43,13 @@ Keep the existing files intact and add parallel files for the experiment:
 
 The new `STAGE3` block intentionally copies `STAGE2` values so the experiment changes the training schedule, not learning rates, loss weights, batch sizes, or scheduler milestones. `OUTPUT_DIR` is separated to avoid mixing artifacts with the two-stage run.
 
-The current two-stage code will reject `SOLVER.STAGE3` unless `config/defaults.py` and a three-stage training entrypoint are added later.
+In joint stage 2, prompt/text and image parameters use separate optimizers and schedulers. `SOLVER.STAGE2.TEXT_LR_FACTOR` controls their initial LR ratio:
+
+`prompt_lr = SOLVER.STAGE2.BASE_LR * SOLVER.STAGE2.TEXT_LR_FACTOR`
+
+The default experiment value is `70`, preserving the prior implicit ratio between the original prompt LR `0.00035` and image LR `0.000005`.
+
+The current two-stage entrypoint ignores `SOLVER.STAGE3`; use `train_clipreid_3stage.py` for this experiment.
 
 ## Mock Validation
 
