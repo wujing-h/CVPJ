@@ -208,6 +208,9 @@ _C.SOLVER.STAGE2.LOG_PERIOD = 100
 _C.SOLVER.STAGE2.EVAL_PERIOD = 10
 # prompt/text optimizer lr = image optimizer lr * TEXT_LR_FACTOR during joint stage2
 _C.SOLVER.STAGE2.TEXT_LR_FACTOR = 1.0
+# joint stage2 loss = IMAGE_LOSS_WEIGHT * image_loss + TEXT_LOSS_WEIGHT * text_loss
+_C.SOLVER.STAGE2.IMAGE_LOSS_WEIGHT = 1.0
+_C.SOLVER.STAGE2.TEXT_LOSS_WEIGHT = 1.0
 # Number of images per batch
 # This is global, so if we have 8 GPUs and IMS_PER_BATCH = 128, each GPU will
 # contain 16 images per batch

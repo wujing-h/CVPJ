@@ -54,6 +54,8 @@ class ThreeStageTrainingTest(unittest.TestCase):
 
         self.assertTrue(hasattr(local_cfg.SOLVER, "STAGE3"))
         self.assertEqual(local_cfg.SOLVER.STAGE2.TEXT_LR_FACTOR, 70)
+        self.assertEqual(local_cfg.SOLVER.STAGE2.IMAGE_LOSS_WEIGHT, 1.0)
+        self.assertEqual(local_cfg.SOLVER.STAGE2.TEXT_LOSS_WEIGHT, 1.0)
         self.assertEqual(local_cfg.SOLVER.STAGE3.BASE_LR, local_cfg.SOLVER.STAGE2.BASE_LR)
         self.assertEqual(local_cfg.SOLVER.STAGE3.STEPS, local_cfg.SOLVER.STAGE2.STEPS)
 
@@ -117,6 +119,19 @@ class ThreeStageTrainingTest(unittest.TestCase):
         self.assertIn("def do_train_stage2_joint", source)
         self.assertIn("text_features = build_all_text_features(", source)
         self.assertIn("detach=False", source)
+
+    def test_joint_processor_combines_image_loss_and_text_loss(self):
+        path = os.path.join(REPO_ROOT, "processor", "processor_clipreid_stage2_joint.py")
+        with open(path, "r", encoding="utf-8") as handle:
+            source = handle.read()
+
+        self.assertIn("from loss.supcontrast import SupConLoss", source)
+        self.assertIn("text_features_for_target = model(label=target, get_text=True)", source)
+        self.assertIn("image_features_for_text_loss = image_features.detach()", source)
+        self.assertIn("text_loss_i2t = xent(image_features_for_text_loss, text_features_for_target, target, target)", source)
+        self.assertIn("text_loss_t2i = xent(text_features_for_target, image_features_for_text_loss, target, target)", source)
+        self.assertIn("image_loss = loss_fn(score, feat, target, target_cam, logits)", source)
+        self.assertIn("loss = cfg.SOLVER.STAGE2.IMAGE_LOSS_WEIGHT * image_loss + cfg.SOLVER.STAGE2.TEXT_LOSS_WEIGHT * text_loss", source)
 
 
 if __name__ == "__main__":

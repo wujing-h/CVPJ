@@ -9,6 +9,7 @@ import torch.nn as nn
 import torch.distributed as dist
 from torch.cuda import amp
 
+from loss.supcontrast import SupConLoss
 from utils.meter import AverageMeter
 from utils.metrics import R1_mAP_eval
 
@@ -66,6 +67,7 @@ def do_train_stage2_joint(cfg,
     acc_meter = AverageMeter()
     evaluator = R1_mAP_eval(num_query, max_rank=50, feat_norm=cfg.TEST.FEAT_NORM)
     scaler = amp.GradScaler()
+    xent = SupConLoss(device)
 
     all_start_time = time.monotonic()
     batch = cfg.SOLVER.STAGE2.IMS_PER_BATCH
@@ -98,7 +100,13 @@ def do_train_stage2_joint(cfg,
                 text_features = build_all_text_features(model, num_classes, batch, device, detach=False)
                 score, feat, image_features = model(x=img, label=target, cam_label=target_cam, view_label=target_view)
                 logits = image_features @ text_features.t()
-                loss = loss_fn(score, feat, target, target_cam, logits)
+                image_loss = loss_fn(score, feat, target, target_cam, logits)
+                text_features_for_target = model(label=target, get_text=True)
+                image_features_for_text_loss = image_features.detach()
+                text_loss_i2t = xent(image_features_for_text_loss, text_features_for_target, target, target)
+                text_loss_t2i = xent(text_features_for_target, image_features_for_text_loss, target, target)
+                text_loss = text_loss_i2t + text_loss_t2i
+                loss = cfg.SOLVER.STAGE2.IMAGE_LOSS_WEIGHT * image_loss + cfg.SOLVER.STAGE2.TEXT_LOSS_WEIGHT * text_loss
 
             scaler.scale(loss).backward()
             scaler.step(optimizer_text)
@@ -117,9 +125,9 @@ def do_train_stage2_joint(cfg,
 
             torch.cuda.synchronize()
             if (n_iter + 1) % log_period == 0:
-                logger.info("Stage2 Epoch[{}] Iteration[{}/{}] Loss: {:.3f}, Acc: {:.3f}, Text Lr: {:.2e}, Image Lr: {:.2e}"
+                logger.info("Stage2 Epoch[{}] Iteration[{}/{}] Loss: {:.3f}, Image Loss: {:.3f}, Text Loss: {:.3f}, Acc: {:.3f}, Text Lr: {:.2e}, Image Lr: {:.2e}"
                             .format(epoch, (n_iter + 1), len(train_loader_stage2),
-                                    loss_meter.avg, acc_meter.avg, scheduler_text._get_lr(epoch)[0],
+                                    loss_meter.avg, image_loss.item(), text_loss.item(), acc_meter.avg, scheduler_text._get_lr(epoch)[0],
                                     scheduler_image.get_lr()[0]))
 
         end_time = time.time()

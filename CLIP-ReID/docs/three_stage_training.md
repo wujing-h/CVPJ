@@ -49,6 +49,12 @@ In joint stage 2, prompt/text and image parameters use separate optimizers and s
 
 The default experiment value is `70`, preserving the prior implicit ratio between the original prompt LR `0.00035` and image LR `0.000005`.
 
+Joint stage 2 also combines two losses:
+
+`loss = IMAGE_LOSS_WEIGHT * image_loss + TEXT_LOSS_WEIGHT * text_loss`
+
+`image_loss` is the original ReID/image objective with `Li2tce`. `text_loss` is the stage1-style bidirectional contrastive loss between current batch image features and prompt-generated text features. Image features are detached for `text_loss`, so this term trains the prompt/text side while the image side is trained by `image_loss`.
+
 The current two-stage entrypoint ignores `SOLVER.STAGE3`; use `train_clipreid_3stage.py` for this experiment.
 
 ## Mock Validation

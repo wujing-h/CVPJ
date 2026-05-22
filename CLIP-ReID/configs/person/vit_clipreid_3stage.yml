@@ -59,6 +59,8 @@ SOLVER:
     STEPS: [30, 50]
     GAMMA: 0.1
     TEXT_LR_FACTOR: 70.0
+    IMAGE_LOSS_WEIGHT: 1.0
+    TEXT_LOSS_WEIGHT: 1.0
 
   # Intended for image_encoder-only finetuning after joint adaptation.
   STAGE3:
