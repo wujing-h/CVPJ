@@ -41,8 +41,8 @@ class CCVID(BaseImageDataset):
         self.num_query_pids, self.num_query_imgs, self.num_query_cams, self.num_query_vids = self.get_imagedata_info(self.query)
         self.num_gallery_pids, self.num_gallery_imgs, self.num_gallery_cams, self.num_gallery_vids = self.get_imagedata_info(self.gallery)
 
-        self.num_train_cams = 6
-        self.num_train_pids = 751
+        # self.num_train_cams = 6
+        # self.num_train_pids = 751
 
     def _resolve_dataset_dir(self, root):
         if osp.exists(osp.join(root, "train.txt")):

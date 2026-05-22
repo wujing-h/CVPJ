@@ -74,7 +74,7 @@ DATASETS:
 
   NAMES: ('ccvid')
   ROOT_DIR: ('..\datasets')
-OUTPUT_DIR: 'ccvid-logs'
+OUTPUT_DIR: 'logs\ccvid'
 
   # NAMES: ('Move')
   # ROOT_DIR: ('..\datasets')

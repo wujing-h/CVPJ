@@ -1,0 +1,578 @@
+2026-05-22 12:51:40,542 transreid INFO: Saving model in the path :logs\ccvid
+2026-05-22 12:51:40,542 transreid INFO: Namespace(config_file='configs/person/vit_clipreid.yml', local_rank=0, opts=[])
+2026-05-22 12:51:40,542 transreid INFO: Loaded configuration file configs/person/vit_clipreid.yml
+2026-05-22 12:51:40,542 transreid INFO: 
+MODEL:
+  PRETRAIN_CHOICE: 'imagenet'
+  METRIC_LOSS_TYPE: 'triplet'
+  IF_LABELSMOOTH: 'on'
+  IF_WITH_CENTER: 'no'
+  NAME: 'ViT-B-16'
+  STRIDE_SIZE: [12, 12]
+  ID_LOSS_WEIGHT : 0.25
+  TRIPLET_LOSS_WEIGHT : 1.0
+  I2T_LOSS_WEIGHT : 1.0
+  SIE_CAMERA: True
+  SIE_COE : 1.0
+
+INPUT:
+  SIZE_TRAIN: [256, 128]
+  SIZE_TEST: [256, 128]
+  PROB: 0.5 # random horizontal flip
+  RE_PROB: 0.5 # random erasing
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+
+DATALOADER:
+  SAMPLER: 'softmax_triplet'
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 8
+
+SOLVER:
+  STAGE1:
+    IMS_PER_BATCH: 64
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.00035
+    WARMUP_LR_INIT: 0.00001
+    LR_MIN: 1e-6
+    WARMUP_METHOD: 'linear'
+    WEIGHT_DECAY:  1e-4
+    WEIGHT_DECAY_BIAS: 1e-4
+    MAX_EPOCHS: 120
+    CHECKPOINT_PERIOD: 120
+    LOG_PERIOD: 50
+    WARMUP_EPOCHS: 5
+  
+  STAGE2:
+    IMS_PER_BATCH: 64
+    OPTIMIZER_NAME: "Adam"
+    BASE_LR: 0.000005
+    WARMUP_METHOD: 'linear'
+    WARMUP_ITERS: 10
+    WARMUP_FACTOR: 0.1
+    WEIGHT_DECAY:  0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+    LARGE_FC_LR: False
+    MAX_EPOCHS: 60
+    CHECKPOINT_PERIOD: 60
+    LOG_PERIOD: 50
+    EVAL_PERIOD: 60
+    BIAS_LR_FACTOR: 2
+    
+    STEPS: [30, 50]
+    GAMMA: 0.1
+  
+TEST:
+  EVAL: True
+  IMS_PER_BATCH: 64
+  RE_RANKING: False
+  WEIGHT: '..\checkpoints\Market1501_clipreid_12x12sie_ViT-B-16_60.pth'
+  NECK_FEAT: 'before'
+  FEAT_NORM: 'yes'
+
+DATASETS:
+#   NAMES: ('market1501')
+#   ROOT_DIR: '..\datasets'
+# OUTPUT_DIR: 'market-logs'
+
+  NAMES: ('ccvid')
+  ROOT_DIR: ('..\datasets')
+OUTPUT_DIR: 'logs\ccvid'
+
+  # NAMES: ('Move')
+  # ROOT_DIR: ('..\datasets')
+# OUTPUT_DIR: 'Move-logs'
+
+#   NAMES: ('msmt17')
+#   ROOT_DIR: ('')
+# OUTPUT_DIR: ''
+
+# CUDA_VISIBLE_DEVICES=3 python train_clipreid.py --config_file configs/person/vit_clipreid.yml
+
+2026-05-22 12:51:40,543 transreid INFO: Running with config:
+DATALOADER:
+  NUM_INSTANCE: 4
+  NUM_WORKERS: 8
+  SAMPLER: softmax_triplet
+DATASETS:
+  NAMES: ccvid
+  ROOT_DIR: ..\datasets
+INPUT:
+  PADDING: 10
+  PIXEL_MEAN: [0.5, 0.5, 0.5]
+  PIXEL_STD: [0.5, 0.5, 0.5]
+  PROB: 0.5
+  RE_PROB: 0.5
+  SIZE_TEST: [256, 128]
+  SIZE_TRAIN: [256, 128]
+MODEL:
+  ATT_DROP_RATE: 0.0
+  COS_LAYER: False
+  DEVICE: cuda
+  DEVICE_ID: 0
+  DIST_TRAIN: False
+  DROP_OUT: 0.0
+  DROP_PATH: 0.1
+  I2T_LOSS_WEIGHT: 1.0
+  ID_LOSS_TYPE: softmax
+  ID_LOSS_WEIGHT: 0.25
+  IF_LABELSMOOTH: on
+  IF_WITH_CENTER: no
+  LAST_STRIDE: 1
+  METRIC_LOSS_TYPE: triplet
+  NAME: ViT-B-16
+  NECK: bnneck
+  NO_MARGIN: False
+  PRETRAIN_CHOICE: imagenet
+  PRETRAIN_PATH: 
+  SIE_CAMERA: True
+  SIE_COE: 1.0
+  SIE_VIEW: False
+  STRIDE_SIZE: [12, 12]
+  TRANSFORMER_TYPE: None
+  TRIPLET_LOSS_WEIGHT: 1.0
+OUTPUT_DIR: logs\ccvid
+SOLVER:
+  MARGIN: 0.3
+  SEED: 1234
+  STAGE1:
+    BASE_LR: 0.00035
+    CHECKPOINT_PERIOD: 120
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 10
+    IMS_PER_BATCH: 64
+    LOG_PERIOD: 50
+    LR_MIN: 1e-06
+    MAX_EPOCHS: 120
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.01
+    WARMUP_ITERS: 500
+    WARMUP_LR_INIT: 1e-05
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+  STAGE2:
+    BASE_LR: 5e-06
+    BIAS_LR_FACTOR: 2
+    CENTER_LOSS_WEIGHT: 0.0005
+    CENTER_LR: 0.5
+    CHECKPOINT_PERIOD: 60
+    COSINE_MARGIN: 0.5
+    COSINE_SCALE: 30
+    EVAL_PERIOD: 60
+    GAMMA: 0.1
+    IMS_PER_BATCH: 64
+    LARGE_FC_LR: False
+    LOG_PERIOD: 50
+    LR_MIN: 1.6e-05
+    MAX_EPOCHS: 60
+    MOMENTUM: 0.9
+    OPTIMIZER_NAME: Adam
+    STEPS: (30, 50)
+    WARMUP_EPOCHS: 5
+    WARMUP_FACTOR: 0.1
+    WARMUP_ITERS: 10
+    WARMUP_LR_INIT: 0.01
+    WARMUP_METHOD: linear
+    WEIGHT_DECAY: 0.0001
+    WEIGHT_DECAY_BIAS: 0.0001
+TEST:
+  DIST_MAT: dist_mat.npy
+  EVAL: True
+  FEAT_NORM: yes
+  IMS_PER_BATCH: 64
+  NECK_FEAT: before
+  RE_RANKING: False
+  WEIGHT: ..\checkpoints\Market1501_clipreid_12x12sie_ViT-B-16_60.pth
+2026-05-22 12:51:44,247 transreid.train INFO: start training
+2026-05-22 12:51:44,252 transreid.train INFO: model: build_transformer(
+  (classifier): Linear(in_features=768, out_features=75, bias=False)
+  (classifier_proj): Linear(in_features=512, out_features=75, bias=False)
+  (bottleneck): BatchNorm1d(768, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bottleneck_proj): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (image_encoder): VisionTransformer(
+    (conv1): Conv2d(3, 768, kernel_size=(16, 16), stride=(12, 12), bias=False)
+    (ln_pre): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+    (transformer): Transformer(
+      (resblocks): Sequential(
+        (0): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (1): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (2): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (3): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (4): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (5): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (6): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (7): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (8): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (9): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (10): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+        (11): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=768, out_features=768, bias=True)
+          )
+          (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+    )
+    (ln_post): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+  )
+  (prompt_learner): PromptLearner()
+  (text_encoder): TextEncoder(
+    (transformer): Transformer(
+      (resblocks): Sequential(
+        (0): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (1): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (2): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (3): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (4): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (5): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (6): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (7): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (8): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (9): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (10): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+        (11): ResidualAttentionBlock(
+          (attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=512, out_features=512, bias=True)
+          )
+          (ln_1): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (mlp): Sequential(
+            (c_fc): Linear(in_features=512, out_features=2048, bias=True)
+            (gelu): QuickGELU()
+            (c_proj): Linear(in_features=2048, out_features=512, bias=True)
+          )
+          (ln_2): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+    )
+    (ln_final): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+  )
+)
+2026-05-22 12:54:55,519 transreid.train INFO: Epoch[1] Iteration[50/1854] Loss: 7.837, Base Lr: 7.80e-05
+2026-05-22 12:54:58,080 transreid.train INFO: Epoch[1] Iteration[100/1854] Loss: 6.140, Base Lr: 7.80e-05
+2026-05-22 12:55:00,655 transreid.train INFO: Epoch[1] Iteration[150/1854] Loss: 5.165, Base Lr: 7.80e-05
+2026-05-22 12:55:03,278 transreid.train INFO: Epoch[1] Iteration[200/1854] Loss: 4.529, Base Lr: 7.80e-05
+2026-05-22 12:55:05,915 transreid.train INFO: Epoch[1] Iteration[250/1854] Loss: 4.088, Base Lr: 7.80e-05
+2026-05-22 12:55:08,493 transreid.train INFO: Epoch[1] Iteration[300/1854] Loss: 3.760, Base Lr: 7.80e-05
+2026-05-22 12:55:11,117 transreid.train INFO: Epoch[1] Iteration[350/1854] Loss: 3.504, Base Lr: 7.80e-05
+2026-05-22 12:55:13,793 transreid.train INFO: Epoch[1] Iteration[400/1854] Loss: 3.303, Base Lr: 7.80e-05
+2026-05-22 12:55:16,430 transreid.train INFO: Epoch[1] Iteration[450/1854] Loss: 3.137, Base Lr: 7.80e-05
+2026-05-22 12:55:19,070 transreid.train INFO: Epoch[1] Iteration[500/1854] Loss: 3.002, Base Lr: 7.80e-05
+2026-05-22 12:55:21,771 transreid.train INFO: Epoch[1] Iteration[550/1854] Loss: 2.885, Base Lr: 7.80e-05
+2026-05-22 12:55:24,495 transreid.train INFO: Epoch[1] Iteration[600/1854] Loss: 2.787, Base Lr: 7.80e-05
+2026-05-22 12:55:27,031 transreid.train INFO: Epoch[1] Iteration[650/1854] Loss: 2.703, Base Lr: 7.80e-05
+2026-05-22 12:55:29,731 transreid.train INFO: Epoch[1] Iteration[700/1854] Loss: 2.625, Base Lr: 7.80e-05
+2026-05-22 12:55:32,373 transreid.train INFO: Epoch[1] Iteration[750/1854] Loss: 2.557, Base Lr: 7.80e-05
+2026-05-22 12:55:35,018 transreid.train INFO: Epoch[1] Iteration[800/1854] Loss: 2.499, Base Lr: 7.80e-05
+2026-05-22 12:55:37,787 transreid.train INFO: Epoch[1] Iteration[850/1854] Loss: 2.444, Base Lr: 7.80e-05
+2026-05-22 12:55:40,408 transreid.train INFO: Epoch[1] Iteration[900/1854] Loss: 2.397, Base Lr: 7.80e-05
+2026-05-22 12:55:43,070 transreid.train INFO: Epoch[1] Iteration[950/1854] Loss: 2.352, Base Lr: 7.80e-05
+2026-05-22 12:55:45,681 transreid.train INFO: Epoch[1] Iteration[1000/1854] Loss: 2.309, Base Lr: 7.80e-05
+2026-05-22 12:55:48,371 transreid.train INFO: Epoch[1] Iteration[1050/1854] Loss: 2.272, Base Lr: 7.80e-05
+2026-05-22 12:55:51,013 transreid.train INFO: Epoch[1] Iteration[1100/1854] Loss: 2.240, Base Lr: 7.80e-05
+2026-05-22 12:55:53,623 transreid.train INFO: Epoch[1] Iteration[1150/1854] Loss: 2.210, Base Lr: 7.80e-05
+2026-05-22 12:55:56,241 transreid.train INFO: Epoch[1] Iteration[1200/1854] Loss: 2.181, Base Lr: 7.80e-05
+2026-05-22 12:55:59,233 transreid.train INFO: Epoch[1] Iteration[1250/1854] Loss: 2.152, Base Lr: 7.80e-05
+2026-05-22 12:56:02,248 transreid.train INFO: Epoch[1] Iteration[1300/1854] Loss: 2.125, Base Lr: 7.80e-05
+2026-05-22 12:56:05,343 transreid.train INFO: Epoch[1] Iteration[1350/1854] Loss: 2.100, Base Lr: 7.80e-05
+2026-05-22 12:56:08,341 transreid.train INFO: Epoch[1] Iteration[1400/1854] Loss: 2.076, Base Lr: 7.80e-05
+2026-05-22 12:56:11,497 transreid.train INFO: Epoch[1] Iteration[1450/1854] Loss: 2.054, Base Lr: 7.80e-05
+2026-05-22 12:56:14,523 transreid.train INFO: Epoch[1] Iteration[1500/1854] Loss: 2.035, Base Lr: 7.80e-05
+2026-05-22 12:56:17,486 transreid.train INFO: Epoch[1] Iteration[1550/1854] Loss: 2.016, Base Lr: 7.80e-05
+2026-05-22 12:56:20,523 transreid.train INFO: Epoch[1] Iteration[1600/1854] Loss: 1.998, Base Lr: 7.80e-05
+2026-05-22 12:56:23,636 transreid.train INFO: Epoch[1] Iteration[1650/1854] Loss: 1.981, Base Lr: 7.80e-05
+2026-05-22 12:56:26,317 transreid.train INFO: Epoch[1] Iteration[1700/1854] Loss: 1.965, Base Lr: 7.80e-05
+2026-05-22 12:56:29,287 transreid.train INFO: Epoch[1] Iteration[1750/1854] Loss: 1.948, Base Lr: 7.80e-05
+2026-05-22 12:56:32,449 transreid.train INFO: Epoch[1] Iteration[1800/1854] Loss: 1.934, Base Lr: 7.80e-05
+2026-05-22 12:56:35,268 transreid.train INFO: Epoch[1] Iteration[1850/1854] Loss: 1.922, Base Lr: 7.80e-05
+2026-05-22 12:56:38,264 transreid.train INFO: Epoch[2] Iteration[50/1854] Loss: 1.439, Base Lr: 1.46e-04
+2026-05-22 12:56:41,016 transreid.train INFO: Epoch[2] Iteration[100/1854] Loss: 1.474, Base Lr: 1.46e-04
+2026-05-22 12:56:44,004 transreid.train INFO: Epoch[2] Iteration[150/1854] Loss: 1.460, Base Lr: 1.46e-04
+2026-05-22 12:56:47,048 transreid.train INFO: Epoch[2] Iteration[200/1854] Loss: 1.460, Base Lr: 1.46e-04
+2026-05-22 12:56:50,130 transreid.train INFO: Epoch[2] Iteration[250/1854] Loss: 1.448, Base Lr: 1.46e-04
+2026-05-22 12:56:53,317 transreid.train INFO: Epoch[2] Iteration[300/1854] Loss: 1.434, Base Lr: 1.46e-04
+2026-05-22 12:56:56,062 transreid.train INFO: Epoch[2] Iteration[350/1854] Loss: 1.434, Base Lr: 1.46e-04
+2026-05-22 12:56:58,907 transreid.train INFO: Epoch[2] Iteration[400/1854] Loss: 1.429, Base Lr: 1.46e-04
+2026-05-22 12:57:01,847 transreid.train INFO: Epoch[2] Iteration[450/1854] Loss: 1.427, Base Lr: 1.46e-04
+2026-05-22 12:57:04,796 transreid.train INFO: Epoch[2] Iteration[500/1854] Loss: 1.426, Base Lr: 1.46e-04
+2026-05-22 12:57:07,705 transreid.train INFO: Epoch[2] Iteration[550/1854] Loss: 1.424, Base Lr: 1.46e-04
+2026-05-22 12:57:10,631 transreid.train INFO: Epoch[2] Iteration[600/1854] Loss: 1.419, Base Lr: 1.46e-04
+2026-05-22 12:57:13,645 transreid.train INFO: Epoch[2] Iteration[650/1854] Loss: 1.413, Base Lr: 1.46e-04
+2026-05-22 12:57:16,589 transreid.train INFO: Epoch[2] Iteration[700/1854] Loss: 1.413, Base Lr: 1.46e-04
+2026-05-22 12:57:19,601 transreid.train INFO: Epoch[2] Iteration[750/1854] Loss: 1.411, Base Lr: 1.46e-04
+2026-05-22 12:57:22,385 transreid.train INFO: Epoch[2] Iteration[800/1854] Loss: 1.409, Base Lr: 1.46e-04
+2026-05-22 12:57:25,005 transreid.train INFO: Epoch[2] Iteration[850/1854] Loss: 1.407, Base Lr: 1.46e-04
+2026-05-22 12:57:27,681 transreid.train INFO: Epoch[2] Iteration[900/1854] Loss: 1.405, Base Lr: 1.46e-04
+2026-05-22 12:57:30,529 transreid.train INFO: Epoch[2] Iteration[950/1854] Loss: 1.402, Base Lr: 1.46e-04
+2026-05-22 12:57:33,676 transreid.train INFO: Epoch[2] Iteration[1000/1854] Loss: 1.399, Base Lr: 1.46e-04
+2026-05-22 12:57:36,583 transreid.train INFO: Epoch[2] Iteration[1050/1854] Loss: 1.400, Base Lr: 1.46e-04
+2026-05-22 12:57:39,425 transreid.train INFO: Epoch[2] Iteration[1100/1854] Loss: 1.401, Base Lr: 1.46e-04
+2026-05-22 12:57:42,497 transreid.train INFO: Epoch[2] Iteration[1150/1854] Loss: 1.399, Base Lr: 1.46e-04
+2026-05-22 12:57:44,901 transreid.train INFO: Epoch[2] Iteration[1200/1854] Loss: 1.397, Base Lr: 1.46e-04
+2026-05-22 12:57:47,195 transreid.train INFO: Epoch[2] Iteration[1250/1854] Loss: 1.395, Base Lr: 1.46e-04
+2026-05-22 12:57:49,518 transreid.train INFO: Epoch[2] Iteration[1300/1854] Loss: 1.394, Base Lr: 1.46e-04
+2026-05-22 12:57:51,879 transreid.train INFO: Epoch[2] Iteration[1350/1854] Loss: 1.392, Base Lr: 1.46e-04
+2026-05-22 12:57:54,169 transreid.train INFO: Epoch[2] Iteration[1400/1854] Loss: 1.391, Base Lr: 1.46e-04
+2026-05-22 12:57:56,621 transreid.train INFO: Epoch[2] Iteration[1450/1854] Loss: 1.389, Base Lr: 1.46e-04
+2026-05-22 12:57:59,188 transreid.train INFO: Epoch[2] Iteration[1500/1854] Loss: 1.389, Base Lr: 1.46e-04
+2026-05-22 12:58:02,057 transreid.train INFO: Epoch[2] Iteration[1550/1854] Loss: 1.388, Base Lr: 1.46e-04
+2026-05-22 12:58:04,859 transreid.train INFO: Epoch[2] Iteration[1600/1854] Loss: 1.385, Base Lr: 1.46e-04
+2026-05-22 12:58:07,640 transreid.train INFO: Epoch[2] Iteration[1650/1854] Loss: 1.384, Base Lr: 1.46e-04
+2026-05-22 12:58:10,394 transreid.train INFO: Epoch[2] Iteration[1700/1854] Loss: 1.382, Base Lr: 1.46e-04
+2026-05-22 12:58:13,082 transreid.train INFO: Epoch[2] Iteration[1750/1854] Loss: 1.380, Base Lr: 1.46e-04
+2026-05-22 12:58:15,743 transreid.train INFO: Epoch[2] Iteration[1800/1854] Loss: 1.380, Base Lr: 1.46e-04
+2026-05-22 12:58:18,514 transreid.train INFO: Epoch[2] Iteration[1850/1854] Loss: 1.380, Base Lr: 1.46e-04
+2026-05-22 12:58:21,423 transreid.train INFO: Epoch[3] Iteration[50/1854] Loss: 1.325, Base Lr: 2.14e-04
+2026-05-22 12:58:24,104 transreid.train INFO: Epoch[3] Iteration[100/1854] Loss: 1.336, Base Lr: 2.14e-04

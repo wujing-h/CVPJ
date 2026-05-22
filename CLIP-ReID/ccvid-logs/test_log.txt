@@ -187,3 +187,4 @@ TEST:
   NECK_FEAT: before
   RE_RANKING: False
   WEIGHT: ..\checkpoints\Market1501_clipreid_12x12sie_ViT-B-16_60.pth
+2026-05-19 20:24:18,402 transreid.test INFO: Enter inferencing
