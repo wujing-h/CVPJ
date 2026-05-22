@@ -5,7 +5,7 @@ import random
 import numpy as np
 import torch
 
-from config import cfg
+from config import cfg_stage3 as cfg
 from datasets.make_dataloader_clipreid import make_dataloader
 from loss.make_loss import make_loss
 from model.make_model_clipreid import make_model

@@ -43,6 +43,8 @@ Keep the existing files intact and add parallel files for the experiment:
 
 The new `STAGE3` block intentionally copies `STAGE2` values so the experiment changes the training schedule, not learning rates, loss weights, batch sizes, or scheduler milestones. `OUTPUT_DIR` is separated to avoid mixing artifacts with the two-stage run.
 
+The three-stage defaults live in `config/defaults_stage3.py` and are exported from `config/__init__.py` as `cfg_stage3` and `cfg_clipreid_3stage`. The original two-stage `cfg` remains backed by `config/defaults.py`.
+
 In joint stage 2, prompt/text and image parameters use separate optimizers and schedulers. `SOLVER.STAGE2.TEXT_LR_FACTOR` controls their initial LR ratio:
 
 `prompt_lr = SOLVER.STAGE2.BASE_LR * SOLVER.STAGE2.TEXT_LR_FACTOR`

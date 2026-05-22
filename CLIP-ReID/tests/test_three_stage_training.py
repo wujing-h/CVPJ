@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import torch
 
-from config import cfg
+from config import cfg_stage3
 
 
 REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
@@ -49,7 +49,7 @@ class TinyThreeStageModel(torch.nn.Module):
 
 class ThreeStageTrainingTest(unittest.TestCase):
     def test_three_stage_config_merges_with_defaults(self):
-        local_cfg = cfg.clone()
+        local_cfg = cfg_stage3.clone()
         local_cfg.merge_from_file(os.path.join(REPO_ROOT, "configs", "person", "vit_clipreid_3stage.yml"))
 
         self.assertTrue(hasattr(local_cfg.SOLVER, "STAGE3"))
@@ -73,6 +73,7 @@ class ThreeStageTrainingTest(unittest.TestCase):
         self.assertLess(called_names.index("do_train_stage1"), called_names.index("do_train_stage2_joint"))
         self.assertLess(called_names.index("do_train_stage2_joint"), called_names.index("do_train_stage3"))
         self.assertIn("cfg.SOLVER.STAGE2.TEXT_LR_FACTOR", source)
+        self.assertIn("from config import cfg_stage3 as cfg", source)
 
     def test_joint_optimizer_returns_separate_prompt_and_image_optimizers(self):
         from solver.make_optimizer_prompt_3stage import make_optimizer_2stage_joint
