@@ -8,7 +8,7 @@ MODEL:
   ID_LOSS_WEIGHT : 0.25
   TRIPLET_LOSS_WEIGHT : 1.0
   I2T_LOSS_WEIGHT : 1.0
-  SIE_CAMERA: True
+  SIE_CAMERA: False
   SIE_COE : 1.0
 
 INPUT:
@@ -29,7 +29,7 @@ SOLVER:
   STAGE1:
     IMS_PER_BATCH: 64
     OPTIMIZER_NAME: "AdamW"
-    BASE_LR: 0.00035
+    BASE_LR: 0.0005
     WARMUP_LR_INIT: 0.0001
     LR_MIN: 1e-5
     WARMUP_METHOD: 'linear'
@@ -68,13 +68,13 @@ TEST:
   FEAT_NORM: 'yes'
 
 DATASETS:
-  NAMES: ('market1501')
-  ROOT_DIR: '..\datasets'
-OUTPUT_DIR: 'logs/market-lr'
+#   NAMES: ('market1501')
+#   ROOT_DIR: '..\datasets'
+# OUTPUT_DIR: 'logs/market-lr'
 
-#   NAMES: ('ccvid')
-#   ROOT_DIR: ('..\datasets')
-# OUTPUT_DIR: 'logs\ccvid2'
+  NAMES: ('ccvid')
+  ROOT_DIR: ('..\datasets')
+OUTPUT_DIR: 'logs\ccvid'
 
   # NAMES: ('Move')
   # ROOT_DIR: ('..\datasets')

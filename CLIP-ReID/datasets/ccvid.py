@@ -103,7 +103,7 @@ class CCVID(BaseImageDataset):
         return dataset
 
     def _parse_camid(self, video_path):
-        match = re.search(r"session(\d+)", video_path)
-        if match:
-            return int(match.group(1)) - 1
+        # match = re.search(r"session(\d+)", video_path)
+        # if match:
+        #     return int(match.group(1)) - 1
         return 0

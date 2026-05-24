@@ -193,20 +193,22 @@ class PromptLearner(nn.Module):
         super().__init__()
         if dataset_name == "VehicleID" or dataset_name == "veri":
             ctx_init = "A photo of a X X X X vehicle."
+        elif dataset_name == 'ccvid':
+            ctx_init = "A X X X X X X person with different clothes."
         else:
             ctx_init = "A photo of a X X X X person."
 
         ctx_dim = 512
         # use given words to initialize context vectors
         ctx_init = ctx_init.replace("_", " ")
-        n_ctx = 4
+        n_ctx = 4 if dataset_name != "ccvid" else 0
         
         tokenized_prompts = clip.tokenize(ctx_init).cuda() 
         with torch.no_grad():
             embedding = token_embedding(tokenized_prompts).type(dtype) 
         self.tokenized_prompts = tokenized_prompts  # torch.Tensor
 
-        n_cls_ctx = 4
+        n_cls_ctx = 4 if dataset_name != "ccvid" else 6
         cls_vectors = torch.empty(num_class, n_cls_ctx, ctx_dim, dtype=dtype) 
         nn.init.normal_(cls_vectors, std=0.02)
         self.cls_ctx = nn.Parameter(cls_vectors) 
